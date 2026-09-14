@@ -15,4 +15,4 @@
 আপনার Termux অ্যাপটি ওপেন করুন এবং নিচের সম্পূর্ণ কোডটি একসাথে কপি করে পেস্ট করে `Enter` চাপুন। প্যাকেজ আপডেট থেকে শুরু করে গ্লোবাল কমান্ড সেটআপ—সবকিছু অটোমেটিক হয়ে টুলটি চালু হয়ে যাবে:
 
 ```bash
-pkg update -y && pkg upgrade -y && pkg install python git -y && cd $HOME && rm -rf YK-Tools && git clone [https://github.com/rksumon51/YK-Tools.git](https://github.com/rksumon51/YK-Tools.git) && echo 'python $HOME/YK-Tools/main.py' > $PREFIX/bin/yk-tools && chmod +x$PREFIX/bin/yk-tools && clear && echo -e '\033[1;32m[+] YK Tools Successfully Installed!\033[0m' && sleep 2 && yk-tools
+pkg update -y && pkg upgrade -y && pkg install python git -y && cd $HOME && rm -rf YK-Tools && git clone https://github.com/rksumon51/YK-Tools.git && echo 'python $HOME/YK-Tools/main.py' > $PREFIX/bin/YK-Tools && chmod +x $PREFIX/bin/YK-Tools && clear && echo -e '\033[1;32m[+] YK Tools Successfully Installed!\033[0m' && sleep 2 && YK-Tools
