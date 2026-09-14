@@ -1,1 +1,18 @@
-# YK-Tools
+# 🚀 YK-Tools
+
+**YK-Tools** হলো Termux-এর জন্য তৈরি একটি প্রফেশনাল এবং মডিউলার সোশ্যাল মিডিয়া ম্যানেজমেন্ট টুল। এর মাধ্যমে ইন্টারনেট স্পিড মনিটরিং, ক্যাপাসিটি ক্যালকুলেশন এবং ভবিষ্যতে একাধিক ইউটিউব চ্যানেলে একসাথে লাইভ স্ট্রিম ম্যানেজ করার মতো কাজগুলো একটি কমান্ড-লাইন ড্যাশবোর্ড থেকে কন্ট্রোল করা যাবে।
+
+## ✨ Features (ফিচারসমূহ)
+
+* 🌐 **Network Monitor:** রিয়েল-টাইম ইন্টারনেট পিং এবং আপলোড স্পিড স্ট্যাটাস।
+* 📊 **Capacity Calculator:** বর্তমান ইন্টারনেট স্পিড অনুযায়ী সর্বোচ্চ কয়টি চ্যানেলে লাইভ করা যাবে তার লাইভ অ্যানালাইসিস।
+* 🔄 **Auto Updater (Hard Sync):** গিটহাবের সাথে কানেক্টেড। এক ক্লিকে টার্মাক্সের প্রজেক্ট আপডেট এবং সিঙ্ক করার সুবিধা।
+* 📺 **YT Work (Upcoming):** একাধিক ইউটিউব চ্যানেলে ব্যাকগ্রাউন্ড লাইভ স্ট্রিমিং (FFmpeg) এবং ভিডিও ম্যানেজমেন্ট।
+* ⚡ **Global Command:** Termux-এর যেকোনো ডিরেক্টরি থেকে টুলটি রান করার সুবিধা।
+
+## 📥 Installation (কিভাবে ইন্সটল করবেন)
+
+আপনার Termux অ্যাপটি ওপেন করুন এবং নিচের সম্পূর্ণ কোডটি একসাথে কপি করে পেস্ট করে `Enter` চাপুন। প্যাকেজ আপডেট থেকে শুরু করে গ্লোবাল কমান্ড সেটআপ—সবকিছু অটোমেটিক হয়ে টুলটি চালু হয়ে যাবে:
+
+```bash
+pkg update -y && pkg upgrade -y && pkg install python git -y && cd $HOME && rm -rf YK-Tools && git clone [https://github.com/rksumon51/YK-Tools.git](https://github.com/rksumon51/YK-Tools.git) && echo 'python $HOME/YK-Tools/main.py' > $PREFIX/bin/yk-tools && chmod +x$PREFIX/bin/yk-tools && clear && echo -e '\033[1;32m[+] YK Tools Successfully Installed!\033[0m' && sleep 2 && yk-tools
