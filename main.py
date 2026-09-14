@@ -57,37 +57,36 @@ def live_ui_updater():
     step = 0
     
     while app_running:
-        sys.stdout.write('\0337') 
+        sys.stdout.write('\0337') # কার্সার পজিশন সেভ
         
+        # ব্যানার আপডেট (কোনো \n ব্যবহার করা হয়নি যাতে স্ক্রল না হয়)
         sys.stdout.write('\033[2;1H')
         for j, line in enumerate(banner):
             c_idx = (step + j) % len(colors)
-            sys.stdout.write(f"{colors[c_idx]}{line}{C_RESET}\033[K\n")
-            
+            sys.stdout.write(f"{colors[c_idx]}{line}{C_RESET}\033[K")
+            if j < 3:
+                sys.stdout.write('\033[1B\r') # সেফভাবে এক লাইন নিচে নামানো
+                
+        # স্ট্যাটাস আপডেট 
         sys.stdout.write('\033[10;1H')
-        sys.stdout.write(f" {C_CYAN}│ {C_GREEN}⚡ Ping     :{C_RESET} {live_ping:<26} {C_CYAN}│{C_RESET}\033[K\n")
+        sys.stdout.write(f" {C_CYAN}│ {C_GREEN}⚡ Ping     :{C_RESET} {live_ping:<26} {C_CYAN}│{C_RESET}\033[K")
         
         sys.stdout.write('\033[11;1H')
-        sys.stdout.write(f" {C_CYAN}│ {C_YELLOW}🚀 Upload   :{C_RESET} {live_speed:<26} {C_CYAN}│{C_RESET}\033[K\n")
+        sys.stdout.write(f" {C_CYAN}│ {C_YELLOW}🚀 Upload   :{C_RESET} {live_speed:<26} {C_CYAN}│{C_RESET}\033[K")
         
         sys.stdout.write('\033[12;1H')
-        sys.stdout.write(f" {C_CYAN}│ {C_MAGENTA}📊 Capacity :{C_RESET} {live_capacity:<26} {C_CYAN}│{C_RESET}\033[K\n")
+        sys.stdout.write(f" {C_CYAN}│ {C_MAGENTA}📊 Capacity :{C_RESET} {live_capacity:<26} {C_CYAN}│{C_RESET}\033[K")
         
-        sys.stdout.write('\0338') 
+        sys.stdout.write('\0338') # কার্সার আগের জায়গায় ফেরত পাঠানো
         sys.stdout.flush()
         
         step += 1
         time.sleep(0.5)
 
-def main():
-    global app_running
-    
-    # [!] টুল চালু হওয়ার সাথেই নেটওয়ার্ক ও সিপিইউ প্রায়োরিটি লক করা হলো
-    os.system("termux-wake-lock")
-    
-    # স্ক্রিন সম্পূর্ণ ক্লিয়ার করে ফ্রেম ফিক্স করা
-    sys.stdout.write("\033[2J\033[H")
-    
+def draw_static_ui():
+    """স্ক্রিন ক্লিয়ার করে একদম পারফেক্ট মাপে ফ্রেম তৈরি করবে"""
+    os.system('clear')
+    sys.stdout.write("\033[H")
     sys.stdout.write("\n\n\n\n\n\n")
     sys.stdout.write(f" {C_CYAN}╭────────────────────────────────────────╮{C_RESET}\n")
     sys.stdout.write(f" {C_CYAN}│ {C_WHITE}🌐 NETWORK STATUS                      {C_CYAN}│{C_RESET}\n")
@@ -102,6 +101,16 @@ def main():
     sys.stdout.write(f"  {C_RED}[0] Exit{C_RESET}\n\n")
     
     sys.stdout.write(f" {C_CYAN}╭─[{C_WHITE}Select Option{C_CYAN}]\n")
+    sys.stdout.flush()
+
+def main():
+    global app_running
+    
+    # ব্যাকগ্রাউন্ডের আউটপুট সাইলেন্ট করে দেওয়া হয়েছে (যাতে স্ক্রিন ভেঙে না যায়)
+    os.system("termux-wake-lock > /dev/null 2>&1")
+    
+    # প্রথমবার UI আঁকা
+    draw_static_ui()
     
     threading.Thread(target=live_ping_checker, daemon=True).start()
     threading.Thread(target=live_speed_checker, daemon=True).start()
@@ -113,22 +122,22 @@ def main():
         if choice == '1':
             print(f"\n {C_YELLOW}[!] Opening YT Work... (কোডিং পরে যোগ করা হবে){C_RESET}")
             time.sleep(1.5)
+            draw_static_ui() # ভুল হলে আবার পারফেক্ট মাপে ফ্রেম তৈরি করবে
         elif choice == '2':
             app_running = False
             time.sleep(1)
-            # আপডেটের সময় লক রিলিজ করা
-            os.system("termux-wake-unlock")
+            os.system("termux-wake-unlock > /dev/null 2>&1")
             update_project()
             break
         elif choice == '0':
             app_running = False
-            # টুল থেকে বের হওয়ার সময় লক রিলিজ করা
-            os.system("termux-wake-unlock")
+            os.system("termux-wake-unlock > /dev/null 2>&1")
             print(f"\n {C_GREEN}Exiting YK Tools. Goodbye!{C_RESET}")
             break
         else:
             print(f"\n {C_RED}[X] Invalid Option!{C_RESET}")
             time.sleep(1)
+            draw_static_ui() # ভুল ইনপুট দিলেও UI ঠিক থাকবে
 
 if __name__ == "__main__":
     main()
