@@ -1,38 +1,18 @@
-import subprocess
-import math
-
-def get_network_status():
-    # Ping চেক
-    try:
-        ping_output = subprocess.check_output(['ping', '-c', '1', '8.8.8.8'], stderr=subprocess.STDOUT, universal_newlines=True)
-        ping_time = ping_output.split('time=')[1].split(' ms')[0] + ' ms'
-    except:
-        ping_time = "Error"
+def get_aggressive_net_args(target_bitrate="2500k"):
+    """
+    যেকোনো সোশ্যাল মিডিয়ার স্ট্রিমিং বা আপলোডিংয়ে ইন্টারনেট শক্তভাবে ধরে রাখার গ্লোবাল লজিক।
+    ভবিষ্যতে লাইভ স্ট্রিমিং বা ভিডিও আপলোডিংয়ে FFmpeg এর সাথে এটি ব্যবহার করা হবে।
+    """
+    # বাফার সাইজ বিটরেটের দ্বিগুণ করা (ইন্টারনেট কাঁপলে এখান থেকে ব্যাকআপ নেবে)
+    buffer_size = str(int(target_bitrate.replace('k', '')) * 2) + 'k'
     
-    # রিয়েল টাইম স্পিড টেস্ট
-    try:
-        import speedtest
-        st = speedtest.Speedtest(secure=True)
-        st.get_servers()
-        st.get_best_server()
-        
-        # আপলোড স্পিড বের করে Mbps-এ কনভার্ট করা
-        upload_bps = st.upload()
-        upload_mbps = round(upload_bps / 1000000, 2)
-        speed_str = f"{upload_mbps} Mbps"
-        
-        # রিয়েল টাইম ক্যাপাসিটি (প্রতি চ্যানেল ২.৫ Mbps ধরে)
-        capacity_calc = math.floor(upload_mbps / 2.5)
-        if capacity_calc < 1:
-            capacity_str = "0 Channels (Low Speed)"
-        else:
-            capacity_str = f"{capacity_calc} Channels"
-            
-    except ImportError:
-        speed_str = "Error (Module Missing)"
-        capacity_str = "N/A"
-    except Exception:
-        speed_str = "Network Error"
-        capacity_str = "N/A"
-        
-    return ping_time, speed_str, capacity_str
+    return [
+        "-thread_queue_size", "1024",      # র‍্যামে ডেটা প্রসেসিং কিউ বড় করা
+        "-maxrate", target_bitrate,        # স্পিড ফিক্সড রাখা
+        "-bufsize", buffer_size,           # গ্লোবাল বাফার ব্যাকআপ
+        "-timeout", "10000000",            # কানেকশন টাইমআউট বাড়ানো
+        "-reconnect", "1",                 # ইন্টারনেট ড্রপ করলে অটো রিকানেক্ট
+        "-reconnect_at_eof", "1",
+        "-reconnect_streamed", "1",
+        "-reconnect_delay_max", "2"        # সর্বোচ্চ ২ সেকেন্ডের মধ্যে আবার স্পিড টেনে নেওয়া
+    ]
