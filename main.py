@@ -15,7 +15,6 @@ C_MAGENTA = '\033[1;35m'
 C_WHITE = '\033[1;37m'
 C_RESET = '\033[0m'
 
-# গ্লোবাল লাইভ ডেটা
 live_ping = "Checking..."
 live_speed = "Testing..."
 live_capacity = "Calculating..."
@@ -57,17 +56,15 @@ def live_ui_updater():
     step = 0
     
     while app_running:
-        sys.stdout.write('\0337') # কার্সার পজিশন সেভ
+        sys.stdout.write('\0337') # Save cursor
         
-        # ব্যানার আপডেট (কোনো \n ব্যবহার করা হয়নি যাতে স্ক্রল না হয়)
         sys.stdout.write('\033[2;1H')
         for j, line in enumerate(banner):
             c_idx = (step + j) % len(colors)
             sys.stdout.write(f"{colors[c_idx]}{line}{C_RESET}\033[K")
             if j < 3:
-                sys.stdout.write('\033[1B\r') # সেফভাবে এক লাইন নিচে নামানো
+                sys.stdout.write('\033[1B\r')
                 
-        # স্ট্যাটাস আপডেট 
         sys.stdout.write('\033[10;1H')
         sys.stdout.write(f" {C_CYAN}│ {C_GREEN}⚡ Ping     :{C_RESET} {live_ping:<26} {C_CYAN}│{C_RESET}\033[K")
         
@@ -77,14 +74,13 @@ def live_ui_updater():
         sys.stdout.write('\033[12;1H')
         sys.stdout.write(f" {C_CYAN}│ {C_MAGENTA}📊 Capacity :{C_RESET} {live_capacity:<26} {C_CYAN}│{C_RESET}\033[K")
         
-        sys.stdout.write('\0338') # কার্সার আগের জায়গায় ফেরত পাঠানো
+        sys.stdout.write('\0338') # Restore cursor
         sys.stdout.flush()
         
         step += 1
         time.sleep(0.5)
 
 def draw_static_ui():
-    """স্ক্রিন ক্লিয়ার করে একদম পারফেক্ট মাপে ফ্রেম তৈরি করবে"""
     os.system('clear')
     sys.stdout.write("\033[H")
     sys.stdout.write("\n\n\n\n\n\n")
@@ -99,17 +95,11 @@ def draw_static_ui():
     sys.stdout.write(f"  {C_GREEN}[1] YT Work{C_RESET}\n")
     sys.stdout.write(f"  {C_YELLOW}[2] Update Project{C_RESET}\n")
     sys.stdout.write(f"  {C_RED}[0] Exit{C_RESET}\n\n")
-    
-    sys.stdout.write(f" {C_CYAN}╭─[{C_WHITE}Select Option{C_CYAN}]\n")
     sys.stdout.flush()
 
 def main():
     global app_running
-    
-    # ব্যাকগ্রাউন্ডের আউটপুট সাইলেন্ট করে দেওয়া হয়েছে (যাতে স্ক্রিন ভেঙে না যায়)
     os.system("termux-wake-lock > /dev/null 2>&1")
-    
-    # প্রথমবার UI আঁকা
     draw_static_ui()
     
     threading.Thread(target=live_ping_checker, daemon=True).start()
@@ -117,12 +107,13 @@ def main():
     threading.Thread(target=live_ui_updater, daemon=True).start()
     
     while True:
-        choice = input(f" {C_CYAN}╰─➤ {C_RESET}")
+        # ইনপুট প্রম্পটটি এখানেই সম্পূর্ণ রাখা হয়েছে
+        choice = input(f" {C_CYAN}╭─[{C_WHITE}Select Option{C_CYAN}]\n {C_CYAN}╰─➤ {C_RESET}")
         
         if choice == '1':
             print(f"\n {C_YELLOW}[!] Opening YT Work... (কোডিং পরে যোগ করা হবে){C_RESET}")
             time.sleep(1.5)
-            draw_static_ui() # ভুল হলে আবার পারফেক্ট মাপে ফ্রেম তৈরি করবে
+            draw_static_ui()
         elif choice == '2':
             app_running = False
             time.sleep(1)
@@ -137,7 +128,7 @@ def main():
         else:
             print(f"\n {C_RED}[X] Invalid Option!{C_RESET}")
             time.sleep(1)
-            draw_static_ui() # ভুল ইনপুট দিলেও UI ঠিক থাকবে
+            draw_static_ui()
 
 if __name__ == "__main__":
     main()
