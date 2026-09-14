@@ -15,6 +15,7 @@ C_MAGENTA = '\033[1;35m'
 C_WHITE = '\033[1;37m'
 C_RESET = '\033[0m'
 
+# গ্লোবাল লাইভ ডেটা
 live_ping = "Checking..."
 live_speed = "Testing..."
 live_capacity = "Calculating..."
@@ -43,7 +44,6 @@ def live_speed_checker():
             live_capacity = f"{cap} Channels"
         except:
             pass
-        # ডেটা আটকে না থেকে দ্রুত আপডেট হওয়ার জন্য টাইম কমানো হয়েছে
         time.sleep(3) 
 
 def live_ui_updater():
@@ -57,7 +57,6 @@ def live_ui_updater():
     step = 0
     
     while app_running:
-        # \0337 (DEC Save) ব্যবহার করা হয়েছে যাতে Termux-এ অ্যারো মুছে না যায়
         sys.stdout.write('\0337') 
         
         sys.stdout.write('\033[2;1H')
@@ -74,7 +73,6 @@ def live_ui_updater():
         sys.stdout.write('\033[12;1H')
         sys.stdout.write(f" {C_CYAN}│ {C_MAGENTA}📊 Capacity :{C_RESET} {live_capacity:<26} {C_CYAN}│{C_RESET}\033[K\n")
         
-        # \0338 (DEC Restore) 
         sys.stdout.write('\0338') 
         sys.stdout.flush()
         
@@ -83,6 +81,10 @@ def live_ui_updater():
 
 def main():
     global app_running
+    
+    # [!] টুল চালু হওয়ার সাথেই নেটওয়ার্ক ও সিপিইউ প্রায়োরিটি লক করা হলো
+    os.system("termux-wake-lock")
+    
     # স্ক্রিন সম্পূর্ণ ক্লিয়ার করে ফ্রেম ফিক্স করা
     sys.stdout.write("\033[2J\033[H")
     
@@ -109,15 +111,19 @@ def main():
         choice = input(f" {C_CYAN}╰─➤ {C_RESET}")
         
         if choice == '1':
-            print(f"\n {C_YELLOW}[!] Opening YT Work...{C_RESET}")
+            print(f"\n {C_YELLOW}[!] Opening YT Work... (কোডিং পরে যোগ করা হবে){C_RESET}")
             time.sleep(1.5)
         elif choice == '2':
             app_running = False
             time.sleep(1)
+            # আপডেটের সময় লক রিলিজ করা
+            os.system("termux-wake-unlock")
             update_project()
             break
         elif choice == '0':
             app_running = False
+            # টুল থেকে বের হওয়ার সময় লক রিলিজ করা
+            os.system("termux-wake-unlock")
             print(f"\n {C_GREEN}Exiting YK Tools. Goodbye!{C_RESET}")
             break
         else:
